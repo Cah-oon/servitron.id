@@ -1,0 +1,130 @@
+
+// SERVITRON.ID - Prisma Schema Enterprise 50+ Tables
+// Generator & Datasource
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+// ENUMS
+enum StorageProvider { R2 S3 B2 MINIO }
+enum MarketplaceType { SHOPEE TOKOPEDIA TIKTOK LAZADA BLIBLI }
+enum ServiceStatus { DITERIMA DIAGNOSA DIKERJAKAN SELESAI DIKIRIM GARANSI }
+enum UserRole { SUPERADMIN ADMIN EDITOR TEKNISI TOKO MEMBER GUEST }
+
+// USERS & RBAC
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  uuid String @unique @default(uuid())
+  email String @unique
+  password String
+  role UserRole @default(MEMBER)
+  twoFaSecret String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  version Int @default(1)
+  firmwares Firmware[]
+  articles Article[]
+  downloadLogs DownloadLog[]
+  @@index([email, deletedAt])
+}
+model Role { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String @unique; permissions Permission[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Permission { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String @unique; roles Role[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+
+// MASTER DATA
+model Manufacturer { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; slug String @unique; models Model[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Model { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; manufacturerId String @db.Uuid; manufacturer Manufacturer @relation(fields:[manufacturerId], references:[id]); firmwares Firmware[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Chip { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; firmwares Firmware[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Category { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; slug String @unique; subcategories Subcategory[]; articles Article[]; firmwares Firmware[]; products Product[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Subcategory { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; slug String @unique; categoryId String @db.Uuid; category Category @relation(fields:[categoryId], references:[id]); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Tag { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String @unique; slug String @unique; firmwares Firmware[]; articles Article[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+
+// FIRMWARE CORE - ANTI LINK MATI
+model Firmware {
+  id String @id @default(uuid()) @db.Uuid
+  uuid String @unique @default(uuid())
+  slug String @unique
+  title String
+  merk String
+  modelId String? @db.Uuid
+  model Model? @relation(fields:[modelId], references:[id])
+  mainboard String?
+  chipset String?
+  ic String?
+  resolusi String?
+  categoryId String? @db.Uuid
+  category Category? @relation(fields:[categoryId], references:[id])
+  chipId String? @db.Uuid
+  chip Chip? @relation(fields:[chipId], references:[id])
+  authorId String? @db.Uuid
+  author User? @relation(fields:[authorId], references:[id])
+  tags Tag[]
+  versions FirmwareVersion[]
+  files FirmwareFile[]
+  viewCount Int @default(0)
+  downloadCount Int @default(0)
+  status String @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  version Int @default(1)
+  @@index([slug, uuid, merk, mainboard])
+}
+model FirmwareVersion { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); firmwareId String @db.Uuid; firmware Firmware @relation(fields:[firmwareId], references:[id]); version String; changelog String?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model StorageLocation { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; provider StorageProvider; bucket String; region String; endpoint String; isActive Boolean @default(true); files FirmwareFile[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model FirmwareFile {
+  id String @id @default(uuid()) @db.Uuid
+  uuid String @unique @default(uuid())
+  firmwareId String @db.Uuid
+  firmware Firmware @relation(fields:[firmwareId], references:[id])
+  storageLocationId String @db.Uuid
+  storageLocation StorageLocation @relation(fields:[storageLocationId], references:[id])
+  objectKey String // r2://bucket/path/file.bin - TIDAK PERNAH DIEXPOSE KE PUBLIK
+  fileName String
+  size Int
+  md5 String
+  sha256 String
+  password String?
+  version String @default("v1")
+  isActive Boolean @default(true)
+  downloadTokens DownloadToken[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  @@index([firmwareId, md5])
+}
+model MirrorServer { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; url String; isActive Boolean @default(true); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model DownloadToken { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); token String @unique; firmwareFileId String @db.Uuid; firmwareFile FirmwareFile @relation(fields:[firmwareFileId], references:[id]); expiresAt DateTime; ip String; isUsed Boolean @default(false); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime?; @@index([token, expiresAt]) }
+model DownloadLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); firmwareFileId String? @db.Uuid; userId String? @db.Uuid; user User? @relation(fields:[userId], references:[id]); ip String; userAgent String?; status String; createdAt DateTime @default(now()); @@index([ip, createdAt]) }
+model Download { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); firmwareId String @db.Uuid; total Int @default(0); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model BrokenLinkLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); firmwareFileId String? @db.Uuid; error String; createdAt DateTime @default(now()); }
+model ChecksumLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); firmwareFileId String @db.Uuid; md5 String; sha256 String; isValid Boolean; createdAt DateTime @default(now()); }
+model BackupLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); fileName String; size Int; status String; createdAt DateTime @default(now()); }
+model AuditLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); userId String? @db.Uuid; action String; entity String; entityId String?; metadata Json?; createdAt DateTime @default(now()); @@index([userId, action]) }
+model ActivityLog { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); userId String? @db.Uuid; activity String; createdAt DateTime @default(now()); }
+model Setting { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); key String @unique; value Json; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+
+// CONTENT
+model Article { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); slug String @unique; title String; content String @db.Text; seoTitle String?; jsonLd Json?; categoryId String? @db.Uuid; category Category? @relation(fields:[categoryId], references:[id]); authorId String? @db.Uuid; author User? @relation(fields:[authorId], references:[id]); tags Tag[]; comments Comment[]; ratings Rating[]; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime?; version Int @default(1); @@index([slug]) }
+model Comment { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); articleId String? @db.Uuid; article Article? @relation(fields:[articleId], references:[id]); userId String? @db.Uuid; content String; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Rating { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); articleId String? @db.Uuid; article Article? @relation(fields:[articleId], references:[id]); userId String? @db.Uuid; value Int; createdAt DateTime @default(now()); }
+model Favorite { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); userId String @db.Uuid; firmwareId String @db.Uuid; createdAt DateTime @default(now()); }
+model Video { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); title String; codeError String?; cause String?; solution String?; biaya Int?; provider String; url String; firmwareId String? @db.Uuid; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Product { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; slug String @unique; categoryId String? @db.Uuid; category Category? @relation(fields:[categoryId], references:[id]); price Int; discount Int?; stock Int @default(0); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model ProductCategory { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; slug String @unique; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Stock { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); productId String @db.Uuid; qty Int; locationRak String?; minStock Int @default(5); barcode String? @unique; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model StockMovement { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); stockId String @db.Uuid; type String; qty Int; note String?; createdAt DateTime @default(now()); }
+model Supplier { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; contact String?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Technician { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; foto String?; pengalaman String?; area String?; rating Float @default(5); whatsapp String?; isVerified Boolean @default(false); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Shop { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; logo String?; mapsUrl String?; rating Float @default(5); whatsapp String?; isVerified Boolean @default(false); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model AffiliateLink { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); productId String? @db.Uuid; marketplace MarketplaceType; url String; price Int; commission Float; clicks Int @default(0); sales Int @default(0); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Order { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); userId String? @db.Uuid; total Int; status String @default("PENDING"); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model ServiceOrder { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); resi String @unique; userId String? @db.Uuid; device String; kerusakan String; status ServiceStatus @default(DITERIMA); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime?; trackings ServiceTracking[] }
+model ServiceTracking { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); serviceOrderId String @db.Uuid; serviceOrder ServiceOrder @relation(fields:[serviceOrderId], references:[id]); status ServiceStatus; note String?; createdAt DateTime @default(now()); }
+model Contact { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); name String; message String; createdAt DateTime @default(now()); }
+model Faq { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); question String; answer String @db.Text; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Banner { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); title String; image String; link String?; isActive Boolean @default(true); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }
+model Notification { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); userId String? @db.Uuid; title String; body String; isRead Boolean @default(false); createdAt DateTime @default(now()); }
+model Newsletter { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); email String @unique; createdAt DateTime @default(now()); }
+model Visitor { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); ip String; path String; createdAt DateTime @default(now()); @@index([ip, createdAt]) }
+model Analytics { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); event String; data Json?; createdAt DateTime @default(now()); }
+model SocialLink { id String @id @default(uuid()) @db.Uuid; uuid String @unique @default(uuid()); platform String; url String; isActive Boolean @default(true); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; deletedAt DateTime? }

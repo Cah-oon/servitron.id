@@ -1,0 +1,9 @@
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npx prisma generate
+RUN npm run build --workspace=apps/api
+EXPOSE 4000
+CMD ["node", "apps/api/dist/main.js"]

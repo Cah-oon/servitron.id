@@ -1,0 +1,9 @@
+{
+  "name": "servitron.id",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "build": "npm run build --workspace=apps/web && npm run build --workspace=apps/api",
+    "dev": "npm run dev --workspace=apps/web"
+  }
+}
