@@ -1,4 +1,8 @@
+"use client";
+import { useState } from "react";
+
 export default function Home() {
+  const [open, setOpen] = useState(false);
   return (
     <>
       <style>{`
@@ -6,60 +10,72 @@ export default function Home() {
         *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
         body{background:#0B1420;color:white;overflow-x:hidden}
         .wrap{max-width:1180px;margin:0 auto;padding:0 16px;width:100%}
-        .header{position:sticky;top:0;z-index:20;background:rgba(11,20,32,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);height:60px;display:flex;align-items:center}
-        .header-inner{display:flex;justify-content:space-between;align-items:center;width:100%;gap:12px}
-        .logo{font-weight:900;color:#0A84FF;letter-spacing:-0.5px;font-size:20px;white-space:nowrap;flex-shrink:0}
-        .nav{font-size:13px;color:#9CA3AF;display:flex;gap:18px;align-items:center;white-space:nowrap}
-        .nav a{cursor:pointer}
-        .nav a:hover{color:white}
-        .btn-login{background:white;color:black;padding:8px 14px;border-radius:999px;font-weight:700;font-size:12px;line-height:1;white-space:nowrap;flex-shrink:0}
-        /* Mobile fix */
-        @media(max-width:720px){
-          .nav .hide-m{display:none}
-          .header{height:56px}
-          .logo{font-size:18px}
-          .btn-login{padding:8px 12px;font-size:11px}
+        .header{position:sticky;top:0;z-index:30;background:rgba(11,20,32,0.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);height:58px;display:flex;align-items:center}
+        .header-inner{display:flex;justify-content:space-between;align-items:center;width:100%}
+        .logo{font-weight:900;color:#0A84FF;letter-spacing:-0.5px;font-size:20px;white-space:nowrap}
+        .nav-desktop{font-size:13px;color:#9CA3AF;display:flex;gap:22px;align-items:center}
+        .nav-desktop a:hover{color:white}
+        .btn-login{background:white;color:black;padding:8px 16px;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer}
+        .hamburger{display:none;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);width:38px;height:38px;border-radius:10px;color:white;font-size:18px;cursor:pointer}
+        .mobile-menu{display:none;position:absolute;top:58px;left:0;right:0;background:#0F1D32;border-bottom:1px solid rgba(255,255,255,0.08);padding:12px 16px;flex-direction:column;gap:2px;z-index:20}
+        .mobile-menu.open{display:flex}
+        .mobile-menu a{padding:12px 12px;border-radius:10px;color:#9CA3AF;font-size:14px;text-decoration:none}
+        .mobile-menu a:hover{background:rgba(255,255,255,0.06);color:white}
+        .mobile-menu .btn-login-m{margin-top:8px;background:#0A84FF;color:white;text-align:center;padding:12px;border-radius:10px;font-weight:700}
+        @media(max-width:800px){
+          .nav-desktop{display:none}
+          .hamburger{display:grid;place-items:center}
         }
-        .hero{padding:44px 0 24px;text-align:center;position:relative}
-        .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);font-size:11px;font-family:monospace;color:#6EB6FF;margin-bottom:18px}
+        .hero{padding:36px 0 20px;text-align:center}
+        .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);font-size:11px;font-family:monospace;color:#6EB6FF;margin-bottom:16px}
         .dot{width:8px;height:8px;border-radius:50%;background:#0A84FF;box-shadow:0 0 10px #0A84FF}
-        h1{font-size:32px;line-height:0.95;letter-spacing:-1.5px;font-weight:900;word-break:break-word}
-        @media(min-width:768px){h1{font-size:52px}}
+        h1{font-size:32px;line-height:0.95;letter-spacing:-1.5px;font-weight:900}
+        @media(min-width:768px){h1{font-size:54px;letter-spacing:-2px}}
         h1 span{color:#0A84FF}
-        .sub{color:#9CA3AF;max-width:560px;margin:14px auto 0;line-height:1.5;font-size:14px;padding:0 8px}
+        .sub{color:#9CA3AF;max-width:560px;margin:14px auto 0;line-height:1.6;font-size:14px;padding:0 4px}
         .search{margin:22px auto 0;max-width:680px;display:flex;gap:8px;padding:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:14px}
         .search input{flex:1;min-width:0;height:46px;padding:0 14px;border-radius:10px;background:#111D2E;border:1px solid rgba(255,255,255,0.1);color:white;outline:none;font-size:14px}
-        .search button{height:46px;padding:0 16px;flex-shrink:0;white-space:nowrap;border-radius:10px;background:#0A84FF;border:none;color:white;font-weight:700;cursor:pointer;font-size:13px;box-shadow:0 0 20px rgba(10,132,255,0.35)}
-        @media(min-width:768px){.search{border-radius:16px;padding:8px} .search input{height:48px;padding:0 18px;border-radius:12px} .search button{height:48px;padding:0 26px;border-radius:12px;font-size:14px}}
-        .stats{margin-top:20px;display:flex;justify-content:center;gap:24px;font-family:monospace}
+        .search button{height:46px;padding:0 18px;flex-shrink:0;white-space:nowrap;border-radius:10px;background:#0A84FF;border:none;color:white;font-weight:700;cursor:pointer;font-size:13px}
+        .stats{margin-top:20px;display:flex;justify-content:center;gap:28px;font-family:monospace}
         .stats b{color:white;font-size:18px}
         .stats span{color:#6B7280;font-size:10px;text-transform:uppercase;letter-spacing:1px}
         .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:32px}
-        @media(min-width:768px){.grid4{grid-template-columns:repeat(4,1fr);gap:12px}}
+        @media(min-width:768px){.grid4{grid-template-columns:repeat(4,1fr)}}
         .card{background:#111D2E;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;text-align:center}
         .firmGrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
         @media(min-width:768px){.firmGrid{grid-template-columns:repeat(3,1fr)}}
         .firm{background:#111D2E;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;text-align:left}
         .pill{font-size:10px;padding:4px 8px;border-radius:999px;background:rgba(10,132,255,0.15);color:#6EB6FF;font-family:monospace;font-weight:700}
         .dl{margin-top:10px;width:100%;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:none;color:white;font-weight:600;cursor:pointer}
-        .footer{border-top:1px solid rgba(255,255,255,0.06);padding:22px 0;margin-top:40px;text-align:center;color:#6B7280;font-family:monospace;font-size:11px}
+        .footer{border-top:1px solid rgba(255,255,255,0.06);padding:28px 0 40px;margin-top:36px;text-align:center;color:#6B7280;font-family:monospace;font-size:11px;line-height:1.6}
       `}</style>
 
       <div className="header">
         <div className="wrap header-inner">
           <div className="logo">SERVITRON.ID</div>
-          <div className="nav">
-            <a className="hide-m">Firmware</a>
-            <a className="hide-m">Skema</a>
-            <a className="hide-m">Blog</a>
-            <div className="btn-login">Login Teknisi</div>
+          
+          <div style={{display:'flex',gap:12,alignItems:'center'}}>
+            <div className="nav-desktop">
+              <a>Firmware</a>
+              <a>Skema</a>
+              <a>Blog</a>
+              <div className="btn-login">Login Teknisi</div>
+            </div>
+            <button className="hamburger" onClick={()=>setOpen(!open)}>{open ? '✕' : '☰'}</button>
           </div>
+        </div>
+
+        <div className={`mobile-menu ${open ? 'open' : ''}`}>
+          <a onClick={()=>setOpen(false)}>📁 Firmware</a>
+          <a onClick={()=>setOpen(false)}>📐 Skema</a>
+          <a onClick={()=>setOpen(false)}>📝 Blog</a>
+          <a className="btn-login-m" onClick={()=>setOpen(false)}>Login Teknisi</a>
         </div>
       </div>
 
       <div className="wrap hero">
         <div className="badge"><div className="dot"></div> API: https://api.servitron.id • LIVE</div>
-        <h1>SOLUSI CEPAT UNTUK<br/>UNTUK<br/><span>TEKNISI</span><br/>INDONESIA</h1>
+        <h1>SOLUSI CEPAT UNTUK<br/><span>TEKNISI</span><br/>INDONESIA</h1>
         <p className="sub">Pusat Solusi Elektronik Indonesia. Ribuan firmware TV, dump EEPROM & skema terlengkap. Deploy di Vercel berhasil!</p>
         
         <div className="search">
@@ -102,7 +118,12 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="footer">© 2026 SERVITRON.ID • Grobogan • api.servitron.id</div>
+      <div className="footer">
+        <div className="wrap">
+          © 2026 SERVITRON.ID • Grobogan • api.servitron.id<br/>
+          Pusat Solusi Elektronik Indonesia • Made for Teknisi
+        </div>
+      </div>
     </>
   );
 }
