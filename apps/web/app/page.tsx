@@ -1,118 +1,94 @@
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0B1420] text-white selection:bg-[#0A84FF]/30">
+    <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400&display=swap');
-        *{font-family:Inter,sans-serif}
-        .mono{font-family:JetBrains Mono,monospace}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+        body{background:#0B1420;color:white}
+        .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+        .header{position:sticky;top:0;z-index:10;background:rgba(11,20,32,0.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);height:64px;display:flex;align-items:center;justify-content:space-between}
+        .logo{font-weight:900;color:#0A84FF;letter-spacing:-0.5px;font-size:19px}
+        .hero{padding:80px 0 40px;text-align:center;position:relative}
+        .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(10,132,255,0.1);border:1px solid rgba(10,132,255,0.2);font-size:11px;font-family:monospace;color:#6EB6FF;margin-bottom:18px}
+        .dot{width:8px;height:8px;border-radius:50%;background:#0A84FF;box-shadow:0 0 10px #0A84FF}
+        h1{font-size:52px;line-height:0.95;letter-spacing:-2px;font-weight:900}
+        h1 span{color:#0A84FF}
+        .sub{color:#9CA3AF;max-width:560px;margin:16px auto 0;line-height:1.5}
+        .search{margin:28px auto 0;max-width:680px;display:flex;gap:10px;padding:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:16px}
+        .search input{flex:1;height:48px;padding:0 18px;border-radius:12px;background:#111D2E;border:1px solid rgba(255,255,255,0.1);color:white;outline:none}
+        .search button{height:48px;padding:0 26px;border-radius:12px;background:#0A84FF;border:none;color:white;font-weight:700;cursor:pointer;box-shadow:0 0 24px rgba(10,132,255,0.45)}
+        .stats{margin-top:24px;display:flex;justify-content:center;gap:28px;font-family:monospace}
+        .stats b{color:white;font-size:18px}
+        .stats span{color:#6B7280;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+        .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:40px}
+        @media(min-width:768px){.grid4{grid-template-columns:repeat(4,1fr)}}
+        .card{background:#111D2E;border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px}
+        .card:hover{border-color:rgba(10,132,255,0.3)}
+        .firmGrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+        @media(min-width:768px){.firmGrid{grid-template-columns:repeat(3,1fr)}}
+        .firm{background:#111D2E;border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px}
+        .pill{font-size:10px;padding:4px 8px;border-radius:999px;background:rgba(10,132,255,0.15);color:#6EB6FF;font-family:monospace;font-weight:700}
+        .dl{margin-top:12px;width:100%;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:none;color:white;font-weight:600;cursor:pointer}
+        .dl:hover{background:#0A84FF}
+        .footer{border-top:1px solid rgba(255,255,255,0.06);padding:28px 0;margin-top:50px;text-align:center;color:#6B7280;font-family:monospace;font-size:11px}
       `}</style>
 
-      {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-[#0B1420]/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1180px] px-5 h-[64px] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#0A84FF] grid place-items-center font-black text-[14px]">S</div>
-            <span className="font-extrabold tracking-tight text-[18px] text-[#0A84FF]">SERVITRON.ID</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-7 text-[13px] text-zinc-400">
-            <a className="hover:text-white transition">Firmware</a>
-            <a className="hover:text-white transition">Skema</a>
-            <a className="hover:text-white transition">Blog</a>
-            <a className="px-4 py-2 rounded-full bg-white text-black font-semibold text-[12px]">Login Teknisi</a>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* glow */}
-        <div className="absolute -top-[300px] left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-[radial-gradient(ellipse_at_center,_rgba(10,132,255,0.18),_transparent_70%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:36px_36px] opacity-[0.25] pointer-events-none" />
-
-        <div className="relative mx-auto max-w-[1180px] px-5 pt-20 pb-14 md:pt-28 md:pb-20 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A84FF]/10 border border-[#0A84FF]/20 text-[11px] mono text-[#6EB6FF] mb-6">
-            <span className="w-2 h-2 rounded-full bg-[#0A84FF] animate-pulse" /> API: https://api.servitron.id • LIVE
-          </div>
-          <h1 className="text-[36px] md:text-[56px] font-extrabold tracking-[-0.03em] leading-[0.95]">
-            SOLUSI CEPAT UNTUK<br />
-            <span className="text-[#0A84FF]">TEKNISI</span> INDONESIA
-          </h1>
-          <p className="mt-4 text-[14px] md:text-[16px] text-zinc-400 max-w-[560px] mx-auto leading-relaxed">
-            Pusat Solusi Elektronik Indonesia. Ribuan firmware TV, dump EEPROM & skema terlengkap. Deploy di Vercel berhasil!
-          </p>
-
-          {/* Search */}
-          <div className="mt-8 max-w-[680px] mx-auto flex flex-col sm:flex-row gap-3 p-2 rounded-[16px] bg-white/[0.06] border border-white/[0.08] backdrop-blur">
-            <input
-              placeholder="Cari tipe TV, IC, chassis... ex: Polytron PLD 32T1852"
-              className="flex-1 h-[48px] px-5 rounded-[12px] bg-[#111D2E] border border-white/10 outline-none text-[14px] placeholder:text-zinc-500"
-            />
-            <button className="h-[48px] px-7 rounded-[12px] bg-[#0A84FF] hover:bg-[#0A7AF0] font-semibold text-[14px] shadow-[0_0_24px_rgba(10,132,255,0.45)] transition">
-              Cari Firmware
-            </button>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-8 flex justify-center gap-8 text-center mono">
-            <div><div className="text-[18px] font-bold text-white">15.000+</div><div className="text-[11px] text-zinc-500 uppercase tracking-widest">Firmware</div></div>
-            <div className="w-px bg-white/10" />
-            <div><div className="text-[18px] font-bold text-white">5.200+</div><div className="text-[11px] text-zinc-500 uppercase tracking-widest">Skema</div></div>
-            <div className="w-px bg-white/10" />
-            <div><div className="text-[18px] font-bold text-white">12.000</div><div className="text-[11px] text-zinc-500 uppercase tracking-widest">Teknisi</div></div>
+      <div className="header">
+        <div className="wrap" style={{display:'flex',justifyContent:'space-between',width:'100%',alignItems:'center'}}>
+          <div className="logo">SERVITRON.ID</div>
+          <div style={{display:'flex',gap:20,fontSize:13,color:'#9CA3AF'}}>
+            <span>Firmware</span><span>Skema</span><span>Blog</span>
+            <span style={{background:'white',color:'black',padding:'6px 14px',borderRadius:999,fontWeight:700,fontSize:12}}>Login Teknisi</span>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-[1180px] px-5 pb-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {[
-            { name: "TV LED", count: "8.2k file", icon: "📺" },
-            { name: "TV Tabung", count: "3.1k file", icon: "🖥️" },
-            { name: "Skema", count: "5.2k file", icon: "📐" },
-            { name: "Dump IC", count: "2.4k file", icon: "💾" },
-          ].map((c) => (
-            <div key={c.name} className="group rounded-[16px] border border-white/[0.06] bg-[#111D2E] p-4 hover:border-[#0A84FF]/30 hover:bg-[#13223A] transition cursor-pointer">
-              <div className="text-[22px]">{c.icon}</div>
-              <div className="mt-3 font-semibold text-[14px]">{c.name}</div>
-              <div className="text-[11px] mono text-zinc-500 mt-1">{c.count}</div>
-            </div>
-          ))}
+      <div className="wrap hero">
+        <div className="badge"><div className="dot"></div> API: https://api.servitron.id • LIVE</div>
+        <h1>SOLUSI CEPAT UNTUK<br/><span>TEKNISI</span> INDONESIA</h1>
+        <p className="sub">Pusat Solusi Elektronik Indonesia. Ribuan firmware TV, dump EEPROM & skema terlengkap. Deploy di Vercel berhasil!</p>
+        
+        <div className="search">
+          <input placeholder="Cari tipe TV, IC, chassis... ex: Polytron PLD 32T1852" />
+          <button>Cari Firmware</button>
         </div>
-      </section>
 
-      {/* Latest */}
-      <section className="mx-auto max-w-[1180px] px-5 pb-20">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-[16px]">Firmware Terbaru</h2>
-          <a className="text-[12px] text-[#0A84FF] hover:underline">Lihat semua →</a>
+        <div className="stats">
+          <div><b>15.000+</b><br/><span>Firmware</span></div>
+          <div><b>5.200+</b><br/><span>Skema</span></div>
+          <div><b>12.000</b><br/><span>Teknisi</span></div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {[
-            { brand: "POLYTRON", model: "PLD 32T1852", chassis: "MSD3663", dl: "1.2k" },
-            { brand: "LG", model: "32LJ500D", chassis: "EAX681...", dl: "892" },
-            { brand: "SAMSUNG", model: "UA32N4003", chassis: "BN94-...", dl: "2.1k" },
-            { brand: "SHARP", model: "2T-C32BB1I", chassis: "TP.MS3663", dl: "654" },
-            { brand: "COOCAA", model: "32S3U", chassis: "RT2841", dl: "543" },
-            { brand: "TCL", model: "32D3000", chassis: "MSD308", dl: "431" },
-          ].map((f) => (
-            <div key={f.model} className="rounded-[14px] border border-white/[0.06] bg-[#111D2E] p-4 hover:border-white/10 transition">
-              <div className="flex items-start justify-between">
-                <span className="text-[10px] px-2 py-1 rounded-full bg-[#0A84FF]/15 text-[#6EB6FF] mono font-bold">{f.brand}</span>
-                <span className="text-[11px] mono text-zinc-500">{f.dl} download</span>
+
+        <div className="grid4">
+          <div className="card"><div style={{fontSize:22}}>📺</div><div style={{marginTop:10,fontWeight:700}}>TV LED</div><div style={{fontSize:11,fontFamily:'monospace',color:'#6B7280'}}>8.2k file</div></div>
+          <div className="card"><div style={{fontSize:22}}>🖥️</div><div style={{marginTop:10,fontWeight:700}}>TV Tabung</div><div style={{fontSize:11,fontFamily:'monospace',color:'#6B7280'}}>3.1k file</div></div>
+          <div className="card"><div style={{fontSize:22}}>📐</div><div style={{marginTop:10,fontWeight:700}}>Skema</div><div style={{fontSize:11,fontFamily:'monospace',color:'#6B7280'}}>5.2k file</div></div>
+          <div className="card"><div style={{fontSize:22}}>💾</div><div style={{marginTop:10,fontWeight:700}}>Dump IC</div><div style={{fontSize:11,fontFamily:'monospace',color:'#6B7280'}}>2.4k file</div></div>
+        </div>
+
+        <div style={{textAlign:'left',marginTop:50}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><h2 style={{fontSize:18,fontWeight:800}}>Firmware Terbaru</h2><a style={{color:'#0A84FF',fontSize:12}}>Lihat semua →</a></div>
+          <div className="firmGrid">
+            {[
+              {b:'POLYTRON',m:'PLD 32T1852',c:'MSD3663',d:'1.2k'},
+              {b:'LG',m:'32LJ500D',c:'EAX681...',d:'892'},
+              {b:'SAMSUNG',m:'UA32N4003',c:'BN94-...',d:'2.1k'},
+              {b:'SHARP',m:'2T-C32BB1I',c:'TP.MS3663',d:'654'},
+              {b:'COOCAA',m:'32S3U',c:'RT2841',d:'543'},
+              {b:'TCL',m:'32D3000',c:'MSD308',d:'431'},
+            ].map((f:any)=>(
+              <div key={f.m} className="firm">
+                <div style={{display:'flex',justifyContent:'space-between'}}><span className="pill">{f.b}</span><span style={{fontSize:11,color:'#6B7280'}}>{f.d} dl</span></div>
+                <div style={{marginTop:12,fontWeight:700}}>{f.m}</div>
+                <div style={{fontSize:12,color:'#6B7280',fontFamily:'monospace',marginTop:4}}>{f.c}</div>
+                <button className="dl">Download</button>
               </div>
-              <div className="mt-3 font-semibold text-[14px]">{f.model}</div>
-              <div className="text-[12px] mono text-zinc-500 mt-1">{f.chassis}</div>
-              <button className="mt-3 w-full h-9 rounded-[10px] bg-white/[0.06] hover:bg-[#0A84FF] text-[12px] font-semibold transition">Download</button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </section>
+      </div>
 
-      <footer className="border-t border-white/[0.06] py-8 text-center text-[11px] mono text-zinc-500">
-        © 2026 SERVITRON.ID • Grobogan, Jawa Tengah • api.servitron.id
-      </footer>
-    </main>
+      <div className="footer">© 2026 SERVITRON.ID • Grobogan, Jawa Tengah • api.servitron.id</div>
+    </>
   );
 }
-
